@@ -1,15 +1,4 @@
-import { Pool } from "pg";
-
-const pool = new Pool({
-  host: "127.0.0.1",
-  port: 5435,
-  user: "parth",
-  password: "postgres",
-  database: "postgress-seats",
-  max: 20,
-  connectionTimeoutMillis: 0,
-  idleTimeoutMillis: 0,
-});
+import pool from "../../common/config/db.js";
 
 function createUsersTable() {
     const query = `CREATE TABLE IF NOT EXISTS users (
