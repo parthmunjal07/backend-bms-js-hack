@@ -7,9 +7,9 @@ services:
     environment:
       POSTGRES_USER: parth
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: bms-backend
+      POSTGRES_DB: postgress-seats
     ports:
-      - "5433:5433"
+      - "5435:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 

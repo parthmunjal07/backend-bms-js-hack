@@ -1,11 +1,11 @@
 import { Pool } from "pg";
 
 const pool = new Pool({
-  host: "localhost",
-  port: 5433,
+  host: "127.0.0.1",
+  port: 5435,
   user: "parth",
   password: "postgres",
-  database: "bms-backend",
+  database: "postgress-seats",
   max: 20,
   connectionTimeoutMillis: 0,
   idleTimeoutMillis: 0,
@@ -16,7 +16,7 @@ function createUsersTable() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`;
     pool.query(query, (err, res) => {
@@ -28,7 +28,7 @@ function createUsersTable() {
     })
 }
 
-export async function createUsers(name, email, password) {
+export async function createUsers(name, email, hashedPassword) {
     const query = `
         INSERT INTO users (name, email, password_hash) 
         VALUES ($1, $2, $3) 
