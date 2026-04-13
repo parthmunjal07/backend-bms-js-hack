@@ -5,7 +5,7 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 import router from './modules/auth/auth.routes.js';
-import bookingRouter from './modules/booking/booking.routes.js';
+import bookingRouter from './modules/bookings/bookings.routes.js';
 
 dotenv.config();
 

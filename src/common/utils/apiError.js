@@ -19,7 +19,7 @@ class ApiError extends Error {
     }
     static notfound(message = "notfound") {
         return new ApiError(412, message);
-        }
+    }
 }
 
 export default ApiError

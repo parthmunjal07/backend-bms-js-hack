@@ -1,4 +1,4 @@
-import pool from "../../common/config/db.js";
+import pool from "../../common/db/db.js";
 
 function createUsersTable() {
     const query = `CREATE TABLE IF NOT EXISTS users (

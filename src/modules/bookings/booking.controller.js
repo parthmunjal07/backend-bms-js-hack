@@ -1,7 +1,6 @@
-import pool from "../../common/config/db.js";
+import pool from "../../common/db/db.js";
 import ApiResponse from "../../common/utils/apiResponse.js";
 
-// Get all seats
 export const getSeats = async (req, res, next) => {
     try {
         const result = await pool.query("SELECT * FROM seats");
@@ -11,11 +10,9 @@ export const getSeats = async (req, res, next) => {
     }
 };
 
-// Book a seat (Requires Auth)
 export const bookSeat = async (req, res, next) => {
     try {
         const id = req.params.id;
-        // Instead of getting name from URL, we get it from the logged-in user!
         const userName = req.user.name || req.user.email; 
 
         const conn = await pool.connect(); 
@@ -27,7 +24,6 @@ export const bookSeat = async (req, res, next) => {
             const result = await conn.query(sql, [id]);
 
             if (result.rowCount === 0) {
-                // Release connection and return error
                 conn.release();
                 return res.status(400).json({ error: "Seat already booked or does not exist" });
             }

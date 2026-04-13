@@ -1,5 +1,5 @@
-import ApiError from "../utils/apiError.js";
-import { verifyAccessToken } from "../utils/jwt.utils.js";
+import ApiError from "../../common/utils/apiError.js";
+import { verifyAccessToken } from "../../common/utils/jwt.utils.js";
 
 const authenticate = (req, res, next) => {
     try {
