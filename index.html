@@ -68,6 +68,10 @@
     </div>
 
     <script>
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+          window.location.href = '/auth';
+      }
       async function run() {
         const tbl = document.getElementById("tbl");
         const res = await fetch("/seats");
