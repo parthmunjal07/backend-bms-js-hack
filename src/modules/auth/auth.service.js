@@ -2,6 +2,7 @@ import ApiError from "../../common/utils/apiError.js";
 import { createUsers, getUserByEmail } from "./auth.models.js";
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt';
+import { generateAccessToken } from "../../common/utils/jwt.utils.js";
 
 export const register = async (name, email, password) => {
     const existingUser = await getUserByEmail(email);
@@ -14,11 +15,8 @@ export const register = async (name, email, password) => {
 
     const user = await createUsers(name, email, hashedPassword);
 
-    const token = jwt.sign(
-        { id: user.id, email: user.email, name: user.name }, 
-        process.env.JWT_ACCESS_SECRET || 'fallback_secret_for_hackathon',             
-        { expiresIn: '1d' } 
-    );
+    const token = generateAccessToken({ id: user.id, email: user.email, name: user.name });
+
     return { 
         user: user, 
         token 
@@ -37,11 +35,7 @@ export const login = async (email, password) => {
         throw ApiError.unauthorized("Invalid email or password");
     }
 
-    const token = jwt.sign(
-        { id: user.id, email: user.email, name: user.name }, 
-        process.env.JWT_ACCESS_SECRET || 'fallback_secret_for_hackathon',             
-        { expiresIn: '1d' } 
-    );
+    const token = generateAccessToken({ id: user.id, email: user.email, name: user.name });
 
     const { password_hash, ...userWithoutPassword } = user;
     
