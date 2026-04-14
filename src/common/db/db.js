@@ -5,7 +5,7 @@ const pool = new pg.Pool({
   port: 5435,
   user: "parth",
   password: "postgres",
-  database: "bms-backend",
+  database: "postgress-seats",
   max: 20,
 });
 
