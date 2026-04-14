@@ -15,8 +15,8 @@ export const register = async (name, email, password) => {
     const user = await createUsers(name, email, hashedPassword);
 
     const token = jwt.sign(
-        { id: user.id, email: user.email }, 
-        process.env.JWT_SECRET,             
+        { id: user.id, email: user.email, name: user.name }, 
+        process.env.JWT_ACCESS_SECRET || 'fallback_secret_for_hackathon',             
         { expiresIn: '1d' } 
     );
     return { 
@@ -38,9 +38,9 @@ export const login = async (email, password) => {
     }
 
     const token = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '1d' }
+        { id: user.id, email: user.email, name: user.name }, 
+        process.env.JWT_ACCESS_SECRET || 'fallback_secret_for_hackathon',             
+        { expiresIn: '1d' } 
     );
 
     const { password_hash, ...userWithoutPassword } = user;

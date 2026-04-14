@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { dirname } from 'path';
+import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 import router from './modules/auth/auth.routes.js';
@@ -13,13 +13,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 6000;
+const port = process.env.PORT || 6001;
 
 app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/../index.html");
+    res.sendFile(path.join(__dirname + "/../index.html"))   ;
+});
+app.get("/auth", (req, res) => {
+    res.sendFile(path.join(__dirname , "/../auth.html"));
 });
 
 app.use('/api/auth', router);
