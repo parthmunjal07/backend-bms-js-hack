@@ -1,12 +1,8 @@
 import pg from "pg";
 
 const pool = new pg.Pool({
-  host: "127.0.0.1",
-  port: 5435,
-  user: "parth",
-  password: "postgres",
-  database: "postgress-seats",
-  max: 20,
+  connectionString: process.env.DATABASE_URL || "postgres://parth:postgres@127.0.0.1:5435/postgress-seats",
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
 });
 
 export default pool;
