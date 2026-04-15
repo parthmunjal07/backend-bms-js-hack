@@ -16,15 +16,19 @@
   </head>
   <body class="min-h-screen flex items-center justify-center p-6 bg-black">
     <div class="max-w-7xl w-full bg-black rounded-3xl p-10 border border-zinc-800">
-      <div class="text-center mb-10">
+      <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-white mb-4 tracking-tight">
           Parth's Cinema - Now Showing<br />
           <br />
           <span class="text-zinc-400">
-            <span class="font-bold">Dhurandhar The Revenge</span>
+            <span id="displayMovieTitle" class="font-bold text-white">Dhurandhar The Revenge</span>
           </span>
         </h1>
-        <p class="text-zinc-500 text-lg">Jassi ko ghar ki yaad kyu nhi aai?</p>
+      </div>
+
+      <div class="flex justify-center mb-10 gap-4" id="movieToggleContainer">
+        <button class="movie-btn px-6 py-2 rounded-full border border-white bg-white text-black font-semibold transition-all" data-movie-id="1" data-title="Dhurandhar The Revenge">Movie 1</button>
+        <button class="movie-btn px-6 py-2 rounded-full border border-zinc-800 bg-black text-zinc-500 hover:border-zinc-600 hover:text-white transition-all" data-movie-id="2" data-title="The Matrix: Reborn">Movie 2</button>
       </div>
 
       <div class="flex justify-center mb-10">
@@ -59,83 +63,95 @@
       if (!token) {
           window.location.href = '/auth';
       }
+
+      let currentMovieId = 1;
+
+      // Handle Movie Toggling
+      document.querySelectorAll('.movie-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+              // Update active button styling
+              document.querySelectorAll('.movie-btn').forEach(b => {
+                  b.className = 'movie-btn px-6 py-2 rounded-full border border-zinc-800 bg-black text-zinc-500 hover:border-zinc-600 hover:text-white transition-all';
+              });
+              e.target.className = 'movie-btn px-6 py-2 rounded-full border border-white bg-white text-black font-semibold transition-all';
+              
+              // Update state and UI
+              currentMovieId = e.target.getAttribute('data-movie-id');
+              document.getElementById('displayMovieTitle').textContent = e.target.getAttribute('data-title');
+              
+              // Re-fetch seats for the new movie
+              run();
+          });
+      });
+
       async function run() {
         const tbl = document.getElementById("tbl");
-        const res = await fetch("/seats");
-        const responseData = await res.json();
-        const j = responseData.data.sort((a, b) => a.id - b.id);
-        let tr;
-        for (let i = 0; i < j.length; i++) {
-          if (i % 8 === 0) tr = document.createElement("tr");
+        tbl.innerHTML = ''; // Clear existing seats
 
-          const td = document.createElement("td");
-
-          const baseClasses =
-            "w-32 h-32 rounded-2xl text-center align-middle text-2xl font-bold transition-all duration-300 select-none relative group";
-
-          if (j[i].isbooked) {
-            td.className = `${baseClasses} bg-zinc-900 text-zinc-600 border border-zinc-800 cursor-not-allowed`;
-            td.innerHTML = `
-                    <span class="relative z-10">${j[i].id}</span>
-                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-black border border-zinc-800 text-sm text-white rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal">
-                        Booked by: <span class="font-bold text-white ml-1">${j[i].name}</span>
-                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-zinc-800"></div>
-                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-black"></div>
-                    </div>
-                `;
-          } else {
-            td.className = `${baseClasses} bg-black text-white border border-zinc-600 cursor-pointer hover:border-white hover:bg-zinc-900 active:scale-95`;
-            td.innerHTML = `<span class="relative z-10">${j[i].id}</span>`;
-          }
-
-          td.addEventListener("click", async function (e) {
-            const currentTd = e.currentTarget;
-            if (currentTd.classList.contains("cursor-not-allowed")) {
-              return; 
+        try {
+            // Notice we are now passing the movieId to the backend!
+            const res = await fetch(`/seats?movieId=${currentMovieId}`);
+            const responseData = await res.json();
+            
+            if(!responseData.data) {
+                tbl.innerHTML = `<tr><td class="text-zinc-500">Backend not yet configured for Movie ${currentMovieId}</td></tr>`;
+                return;
             }
 
-            try {
-              const id = j[i].id; 
-              
-              const token = localStorage.getItem('authToken');
-              
-              if (!token) {
-                  alert("You must be logged in to book a seat!");
-                  window.location.href = '/auth';
-                  return;
-              }
+            const j = responseData.data.sort((a, b) => a.id - b.id);
+            let tr;
+            for (let i = 0; i < j.length; i++) {
+            if (i % 8 === 0) tr = document.createElement("tr");
 
-              const res = await fetch(`/${id}`, { 
-                  method: "PUT",
-                  headers: {
-                      "Authorization": `Bearer ${token}`
-                  }
-              });
-              
-              const data = await res.json();
+            const td = document.createElement("td");
+            const baseClasses = "w-32 h-32 rounded-2xl text-center align-middle text-2xl font-bold transition-all duration-300 select-none relative group";
 
-              if (!data.success) {
-                alert("FAILED! " + (data.message || "Couldn't book! already booked."));
-              } else {
-                alert("Booked successfully!");
-                const userName = localStorage.getItem('userName') || "You";
-
-                currentTd.className = `${baseClasses} bg-zinc-900 text-zinc-600 border border-zinc-800 cursor-not-allowed`;
-                currentTd.innerHTML = `
-                            <span class="relative z-10">${id}</span>
-                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-black border border-zinc-800 text-sm text-white rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal">
-                                Booked by: <span class="font-bold text-white ml-1">${userName}</span>
-                                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-zinc-800"></div>
-                                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-black"></div>
-                            </div>
-                        `;
-              }
-            } catch (ex) {
-              alert("error booking " + ex);
+            if (j[i].isbooked) {
+                td.className = `${baseClasses} bg-zinc-900 text-zinc-600 border border-zinc-800 cursor-not-allowed`;
+                td.innerHTML = `<span class="relative z-10">${j[i].id}</span>
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-black border border-zinc-800 text-sm text-white rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal">
+                            Booked by: <span class="font-bold text-white ml-1">${j[i].name}</span>
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-zinc-800"></div>
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-black"></div>
+                        </div>`;
+            } else {
+                td.className = `${baseClasses} bg-black text-white border border-zinc-600 cursor-pointer hover:border-white hover:bg-zinc-900 active:scale-95`;
+                td.innerHTML = `<span class="relative z-10">${j[i].id}</span>`;
             }
-          });
-          tr.appendChild(td);
-          tbl.appendChild(tr);
+
+            td.addEventListener("click", async function (e) {
+                if (e.currentTarget.classList.contains("cursor-not-allowed")) return; 
+
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert("You must be logged in to book a seat!");
+                    window.location.href = '/auth';
+                    return;
+                }
+
+                // We now pass the movieId in the body so the backend knows WHICH movie's seat to lock
+                const res = await fetch(`/${j[i].id}`, { 
+                    method: "PUT",
+                    headers: { 
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ movieId: currentMovieId })
+                });
+                
+                const data = await res.json();
+
+                if (!data.success) {
+                    alert("FAILED! " + (data.message || "Couldn't book! already booked."));
+                } else {
+                    run(); // Re-render the grid to show the updated state
+                }
+            });
+            tr.appendChild(td);
+            tbl.appendChild(tr);
+            }
+        } catch (err) {
+            console.error(err);
         }
       }
       run();
