@@ -24,23 +24,25 @@ export const bookSeat = async (req, res, next) => {
         try {
             await conn.query("BEGIN");
             
+            // FIX 1: Update the SELECT query to include movie_id
             const sql = "SELECT * FROM seats WHERE id = $1 AND movie_id = $2 AND isbooked = 0 FOR UPDATE";
-            const result = await conn.query(sql, [seatId, movieId]);
+            const result = await conn.query(sql, [id, movieId]);
 
             if (result.rowCount === 0) {
                 conn.release();
-                return res.status(400).json({ success: false, message: "Seat already booked" });
+                return res.status(400).json({ error: "Seat already booked or does not exist" });
             }
             
+            // FIX 2: Update the UPDATE query to include movie_id
             const sqlU = "UPDATE seats SET isbooked = 1, name = $3 WHERE id = $1 AND movie_id = $2";
-            const updateResult = await conn.query(sqlU, [seatId, movieId, userName]);
+            const updateResult = await conn.query(sqlU, [id, movieId, userName]);
 
             await conn.query("COMMIT");
             conn.release(); 
 
-            return ApiResponse.ok(res, "Seat booked successfully");        
+            return ApiResponse.ok(res, "Seat booked successfully", updateResult.rows);
         } catch (transactionError) {
-            await conn.query("ROLLBACK");
+            await conn.query("ROLLBACK"); 
             conn.release();
             throw transactionError;
         }
