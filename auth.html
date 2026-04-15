@@ -4,18 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentication</title>
-    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Font: Outfit -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         body { 
             font-family: 'Outfit', sans-serif; 
         }
-        /* Smooth tab transition classes */
         .tab-content { 
             display: none; 
         }
@@ -33,10 +30,11 @@
             theme: {
                 extend: {
                     colors: {
-                        slate: {
-                            700: '#334155',
-                            800: '#1e293b',
-                            900: '#0f172a',
+                        zinc: {
+                            700: '#3f3f46',
+                            800: '#27272a',
+                            900: '#18181b',
+                            950: '#09090b',
                         }
                     }
                 }
@@ -44,70 +42,58 @@
         }
     </script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 flex items-center justify-center p-4">
+<body class="min-h-screen bg-black text-zinc-300 flex items-center justify-center p-4">
 
-    <!-- Card Container -->
-    <div class="w-full max-w-md bg-slate-800/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-8 relative overflow-hidden">
+    <div class="w-full max-w-md bg-black border border-zinc-800 rounded-2xl shadow-2xl p-8 relative overflow-hidden">
         
-        <!-- Decorative Glow Effects (Glassmorphism Accents) -->
-        <div class="absolute -top-20 -left-20 w-40 h-40 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none"></div>
-
-        <!-- Header -->
         <div class="text-center mb-8 relative z-10">
-            <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2" id="formTitle">Welcome Back</h1>
-            <p class="text-slate-400 text-sm" id="formSubtitle">Sign in to access your account</p>
+            <h1 class="text-3xl font-bold text-white mb-2" id="formTitle">Welcome Back</h1>
+            <p class="text-zinc-500 text-sm" id="formSubtitle">Sign in to access your account</p>
         </div>
 
-        <!-- Alert/Toast Message Box -->
         <div id="messageBox" class="hidden rounded-lg p-3 mb-6 text-center text-sm font-medium border transition-colors duration-300 z-10 relative"></div>
 
-        <!-- Tabs Toggle -->
-        <div class="flex mb-8 bg-slate-900/50 rounded-lg p-1 relative z-10 border border-slate-700/50">
-            <button type="button" onclick="switchTab('login')" id="tabLogin" class="flex-1 py-2 text-sm font-semibold rounded-md bg-slate-700/80 text-white shadow-sm transition-all duration-300">Login</button>
-            <button type="button" onclick="switchTab('register')" id="tabRegister" class="flex-1 py-2 text-sm font-semibold rounded-md text-slate-400 hover:text-slate-200 transition-all duration-300">Register</button>
+        <div class="flex mb-8 bg-zinc-950 rounded-lg p-1 relative z-10 border border-zinc-800">
+            <button type="button" onclick="switchTab('login')" id="tabLogin" class="flex-1 py-2 text-sm font-semibold rounded-md bg-zinc-900 border border-zinc-800 text-white shadow-sm transition-all duration-300">Login</button>
+            <button type="button" onclick="switchTab('register')" id="tabRegister" class="flex-1 py-2 text-sm font-semibold rounded-md text-zinc-500 hover:text-white transition-all duration-300 bg-transparent border border-transparent">Register</button>
         </div>
 
-        <!-- Login Form -->
         <form id="loginForm" class="tab-content active relative z-10">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1" for="loginEmail">Email Address</label>
-                    <input type="email" id="loginEmail" required class="w-full bg-slate-900/50 border border-slate-700 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors placeholder-slate-600" placeholder="user@example.com">
+                    <label class="block text-sm font-medium text-zinc-400 mb-1" for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" required class="w-full bg-black border border-zinc-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-white transition-colors placeholder-zinc-700" placeholder="user@example.com">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1" for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" required class="w-full bg-slate-900/50 border border-slate-700 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors placeholder-slate-600" placeholder="••••••••">
+                    <label class="block text-sm font-medium text-zinc-400 mb-1" for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required class="w-full bg-black border border-zinc-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-white transition-colors placeholder-zinc-700" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-900 font-bold py-3 mt-4 rounded-lg hover:opacity-90 transition-opacity active:scale-[0.98] shadow-lg shadow-emerald-500/20">Sign In</button>
+                <button type="submit" class="w-full bg-white text-black font-bold py-3 mt-4 rounded-lg hover:bg-zinc-200 transition-colors active:scale-[0.98]">Sign In</button>
             </div>
         </form>
 
-        <!-- Register Form -->
         <form id="registerForm" class="tab-content relative z-10">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1" for="registerName">Full Name</label>
-                    <input type="text" id="registerName" required class="w-full bg-slate-900/50 border border-slate-700 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors placeholder-slate-600" placeholder="John Doe">
+                    <label class="block text-sm font-medium text-zinc-400 mb-1" for="registerName">Full Name</label>
+                    <input type="text" id="registerName" required class="w-full bg-black border border-zinc-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-white transition-colors placeholder-zinc-700" placeholder="John Doe">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1" for="registerEmail">Email Address</label>
-                    <input type="email" id="registerEmail" required class="w-full bg-slate-900/50 border border-slate-700 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors placeholder-slate-600" placeholder="user@example.com">
+                    <label class="block text-sm font-medium text-zinc-400 mb-1" for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" required class="w-full bg-black border border-zinc-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-white transition-colors placeholder-zinc-700" placeholder="user@example.com">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1" for="registerPassword">Password</label>
-                    <input type="password" id="registerPassword" required class="w-full bg-slate-900/50 border border-slate-700 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors placeholder-slate-600" placeholder="••••••••">
+                    <label class="block text-sm font-medium text-zinc-400 mb-1" for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required class="w-full bg-black border border-zinc-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-white transition-colors placeholder-zinc-700" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-900 font-bold py-3 mt-4 rounded-lg hover:opacity-90 transition-opacity active:scale-[0.98] shadow-lg shadow-cyan-500/20">Create Account</button>
+                <button type="submit" class="w-full bg-white text-black font-bold py-3 mt-4 rounded-lg hover:bg-zinc-200 transition-colors active:scale-[0.98]">Create Account</button>
             </div>
         </form>
     </div>
 
-    <!-- JavaScript Handling Logic -->
     <script>
         const API_BASE_URL = '/api/auth';
         
-        // Form & UI Elements Reference
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         const tabLogin = document.getElementById('tabLogin');
@@ -116,17 +102,15 @@
         const formSubtitle = document.getElementById('formSubtitle');
         const messageBox = document.getElementById('messageBox');
 
-        // Toggle UI Between Login & Register Layouts
         function switchTab(tab) {
-            hideMessage(); // Clear messages when swapping tabs
+            hideMessage(); 
 
             if (tab === 'login') {
                 loginForm.classList.add('active');
                 registerForm.classList.remove('active');
                 
-                // Adjust Active Tab Styles
-                tabLogin.className = 'flex-1 py-2 text-sm font-semibold rounded-md bg-slate-700/80 text-white shadow-sm transition-all duration-300';
-                tabRegister.className = 'flex-1 py-2 text-sm font-semibold rounded-md text-slate-400 hover:text-slate-200 transition-all duration-300 bg-transparent';
+                tabLogin.className = 'flex-1 py-2 text-sm font-semibold rounded-md bg-zinc-900 border border-zinc-800 text-white shadow-sm transition-all duration-300';
+                tabRegister.className = 'flex-1 py-2 text-sm font-semibold rounded-md text-zinc-500 hover:text-white transition-all duration-300 bg-transparent border border-transparent';
                 
                 formTitle.textContent = 'Welcome Back';
                 formSubtitle.textContent = 'Sign in to access your account';
@@ -134,26 +118,22 @@
                 registerForm.classList.add('active');
                 loginForm.classList.remove('active');
                 
-                // Adjust Active Tab Styles
-                tabRegister.className = 'flex-1 py-2 text-sm font-semibold rounded-md bg-slate-700/80 text-white shadow-sm transition-all duration-300';
-                tabLogin.className = 'flex-1 py-2 text-sm font-semibold rounded-md text-slate-400 hover:text-slate-200 transition-all duration-300 bg-transparent';
+                tabRegister.className = 'flex-1 py-2 text-sm font-semibold rounded-md bg-zinc-900 border border-zinc-800 text-white shadow-sm transition-all duration-300';
+                tabLogin.className = 'flex-1 py-2 text-sm font-semibold rounded-md text-zinc-500 hover:text-white transition-all duration-300 bg-transparent border border-transparent';
                 
                 formTitle.textContent = 'Create Account';
                 formSubtitle.textContent = 'Join us and start your journey';
             }
         }
 
-        // Show Toast / Alert Based on Success or Error
         function showMessage(msg, isSuccess = false) {
             messageBox.textContent = msg;
             messageBox.classList.remove('hidden');
             
             if (isSuccess) {
-                // Success styling utilizing Emerald-400 specs
-                messageBox.className = 'rounded-lg p-3 mb-6 text-center text-sm font-medium border z-10 relative bg-emerald-400/10 text-emerald-400 border-emerald-400/30';
+                messageBox.className = 'rounded-lg p-3 mb-6 text-center text-sm font-medium border z-10 relative bg-zinc-900 text-white border-zinc-700';
             } else {
-                // Error styling utilizing Rose-500 specs
-                messageBox.className = 'rounded-lg p-3 mb-6 text-center text-sm font-medium border z-10 relative bg-rose-500/10 text-rose-500 border-rose-500/30';
+                messageBox.className = 'rounded-lg p-3 mb-6 text-center text-sm font-medium border z-10 relative bg-zinc-950 text-white border-zinc-700';
             }
         }
 
@@ -162,7 +142,6 @@
             messageBox.textContent = '';
         }
 
-        // Shared API Communication Logic
         async function handleAuth(url, payload) {
             try {
                 hideMessage();
@@ -175,15 +154,12 @@
                 
                 const data = await response.json();
                 
-                // Check if status is 4xx/500 or application success flag is false
                 if (!response.ok || data.success === false) {
                     throw new Error(data.message || 'Authentication failed. Please try again.');
                 }
                 
-                // Trigger success flow
                 showMessage(data.message || 'Success! Redirecting...', true);
                 
-                // Store local tokens if available per requirements
                 if (data.data?.token) {
                     localStorage.setItem('authToken', data.data.token);
                 }
@@ -191,18 +167,15 @@
                     localStorage.setItem('userName', data.data.user.name);
                 }
                 
-                // Redirect user gracefully
                 setTimeout(() => {
                     window.location.href = '/';
                 }, 1000);
                 
             } catch (error) {
-                // If anything fails display the error message on UI
                 showMessage(error.message, false);
             }
         }
 
-        // Event Listener: Handling Login Execution
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -211,7 +184,6 @@
             handleAuth(`${API_BASE_URL}/login`, { email, password });
         });
 
-        // Event Listener: Handling Register Execution
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('registerName').value;
