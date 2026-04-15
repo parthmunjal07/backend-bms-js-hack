@@ -15,8 +15,13 @@
     </style>
   </head>
   <body class="min-h-screen flex items-center justify-center p-6 bg-black">
-    <div class="max-w-7xl w-full bg-black rounded-3xl p-10 border border-zinc-800">
-      <div class="text-center mb-8">
+    <div class="max-w-7xl w-full bg-black rounded-3xl p-10 border border-zinc-800 relative">
+      
+      <button id="logoutBtn" class="absolute top-8 right-8 px-5 py-2 text-sm font-semibold text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-600 rounded-full transition-all active:scale-95">
+        Logout
+      </button>
+
+      <div class="text-center mb-8 mt-2">
         <h1 class="text-4xl font-bold text-white mb-4 tracking-tight">
           Parth's Cinema - Now Showing<br />
           <br />
@@ -59,10 +64,20 @@
     </div>
 
     <script>
+      // 1. Initial Authentication Check
       const token = localStorage.getItem('authToken');
       if (!token) {
           window.location.href = '/auth';
       }
+
+      // 2. Handle Logout Logic
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+          // Clear the stored credentials
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userName');
+          // Redirect back to the auth page
+          window.location.href = '/auth';
+      });
 
       let currentMovieId = 1;
 
@@ -89,12 +104,11 @@
         tbl.innerHTML = ''; // Clear existing seats
 
         try {
-            // Notice we are now passing the movieId to the backend!
             const res = await fetch(`/seats?movieId=${currentMovieId}`);
             const responseData = await res.json();
             
             if(!responseData.data) {
-                tbl.innerHTML = `<tr><td class="text-zinc-500">Backend not yet configured for Movie ${currentMovieId}</td></tr>`;
+                tbl.innerHTML = `<tr><td class="text-zinc-500 text-center">Backend not yet configured for Movie ${currentMovieId}</td></tr>`;
                 return;
             }
 
@@ -107,36 +121,32 @@
             const baseClasses = "w-32 h-32 rounded-2xl text-center align-middle text-2xl font-bold transition-all duration-300 select-none relative group";
 
             if (j[i].isbooked) {
-            td.className = `${baseClasses} bg-zinc-900 text-zinc-600 border border-zinc-800 cursor-not-allowed`;
-            td.innerHTML = `
-                    <span class="relative z-10">${i + 1}</span>
-                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-black border border-zinc-800 text-sm text-white rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal">
-                        Booked by: <span class="font-bold text-white ml-1">${j[i].name}</span>
-                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-zinc-800"></div>
-                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-black"></div>
-                    </div>
-                `;
-          } else {
-            td.className = `${baseClasses} bg-black text-white border border-zinc-600 cursor-pointer hover:border-white hover:bg-zinc-900 active:scale-95`;
-            // And changed this to ${i + 1}
-            td.innerHTML = `<span class="relative z-10">${i + 1}</span>`;
-          }
+                td.className = `${baseClasses} bg-zinc-900 text-zinc-600 border border-zinc-800 cursor-not-allowed`;
+                td.innerHTML = `<span class="relative z-10">${i + 1}</span>
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-black border border-zinc-800 text-sm text-white rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal">
+                            Booked by: <span class="font-bold text-white ml-1">${j[i].name}</span>
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-zinc-800"></div>
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-black"></div>
+                        </div>`;
+            } else {
+                td.className = `${baseClasses} bg-black text-white border border-zinc-600 cursor-pointer hover:border-white hover:bg-zinc-900 active:scale-95`;
+                td.innerHTML = `<span class="relative z-10">${i + 1}</span>`;
+            }
 
             td.addEventListener("click", async function (e) {
                 if (e.currentTarget.classList.contains("cursor-not-allowed")) return; 
 
-                const token = localStorage.getItem('authToken');
-                if (!token) {
+                const currentToken = localStorage.getItem('authToken');
+                if (!currentToken) {
                     alert("You must be logged in to book a seat!");
                     window.location.href = '/auth';
                     return;
                 }
 
-                // We now pass the movieId in the body so the backend knows WHICH movie's seat to lock
                 const res = await fetch(`/${j[i].id}`, { 
                     method: "PUT",
                     headers: { 
-                        "Authorization": `Bearer ${token}`,
+                        "Authorization": `Bearer ${currentToken}`,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({ movieId: currentMovieId })
